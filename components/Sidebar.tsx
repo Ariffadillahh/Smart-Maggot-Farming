@@ -2,15 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, Activity, BookOpen, FileText, Menu, X, LogOut } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase'; 
 
 export default function Sidebar() {
     const pathname = usePathname();
     const router = useRouter();
 
     const [isOpen, setIsOpen] = useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const menuItems = [
         { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
@@ -23,12 +24,13 @@ export default function Sidebar() {
         setIsOpen(false);
     }, [pathname]);
 
-    const handleLogout = () => {
-        console.log("Logout diklik");
+    const handleLogout = async () => {
+        setIsLoggingOut(true);
 
-        setTimeout(() => {
-            router.push('/login');
-        }, 1000);
+        await supabase.auth.signOut();
+
+        router.refresh();
+        router.replace('/login');
     };
 
     return (
@@ -95,10 +97,13 @@ export default function Sidebar() {
                 <div className="p-4 mt-auto">
                     <button
                         onClick={handleLogout}
-                        className="flex w-full items-center justify-center gap-3 px-4 py-3 rounded-xl text-white bg-red-600 cursor-pointer"
+                        disabled={isLoggingOut}
+                        className="flex w-full items-center justify-center gap-3 px-4 py-3 rounded-xl text-white bg-red-600/90 hover:bg-red-600 transition-colors cursor-pointer disabled:opacity-50"
                     >
                         <LogOut size={20} />
-                        <span className="font-medium">Logout</span>
+                        <span className="font-medium">
+                            {isLoggingOut ? 'Keluar...' : 'Logout'}
+                        </span>
                     </button>
                 </div>
             </aside>
