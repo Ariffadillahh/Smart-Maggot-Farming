@@ -3,8 +3,18 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Activity, BookOpen, FileText, Menu, X, LogOut } from 'lucide-react';
-import { supabase } from '@/lib/supabase'; 
+import {
+    LayoutDashboard,
+    Activity,
+    BookOpen,
+    FileText,
+    Menu,
+    X,
+    LogOut,
+    Users,
+    ListChecks
+} from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 export default function Sidebar() {
     const pathname = usePathname();
@@ -12,13 +22,27 @@ export default function Sidebar() {
 
     const [isOpen, setIsOpen] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const [role, setRole] = useState<string | null>(null);
 
-    const menuItems = [
-        { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-        { name: 'Monitoring', icon: Activity, path: '/dashboard/monitoring' },
-        { name: 'Edukasi', icon: BookOpen, path: '/dashboard/edukasi' },
-        { name: 'Laporan', icon: FileText, path: '/dashboard/laporan' },
-    ];
+    useEffect(() => {
+        const fetchUserRole = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (session) {
+                const { data: userData, error } = await supabase
+                    .from('users')
+                    .select('role')
+                    .eq('id', session.user.id)
+                    .single();
+
+                if (userData && !error) {
+                    setRole(userData.role);
+                }
+            }
+        };
+
+        fetchUserRole();
+    }, []);
 
     useEffect(() => {
         setIsOpen(false);
@@ -26,12 +50,26 @@ export default function Sidebar() {
 
     const handleLogout = async () => {
         setIsLoggingOut(true);
-
         await supabase.auth.signOut();
-
         router.refresh();
         router.replace('/login');
     };
+
+    const baseMenuItems = [
+        { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+        { name: 'Monitoring', icon: Activity, path: '/dashboard/monitoring' },
+        { name: 'Edukasi', icon: BookOpen, path: '/dashboard/edukasi' },
+        { name: 'Laporan', icon: FileText, path: '/dashboard/laporan' },
+    ];
+
+    const adminMenuItems = [
+        { name: 'Manajemen User', icon: Users, path: '/dashboard/users' },
+        { name: 'Manajemen Quiz', icon: ListChecks, path: '/dashboard/quiz' },
+    ];
+
+    const menuItems = role === 'admin'
+        ? adminMenuItems
+        : baseMenuItems;
 
     return (
         <>

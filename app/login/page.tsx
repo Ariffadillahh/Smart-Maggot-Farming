@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Leaf, Mail, Lock, ArrowRight, Sparkles, Quote } from 'lucide-react';
+import { Leaf, Mail, Lock, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 
@@ -20,7 +20,18 @@ export default function LoginPage() {
         const checkAuth = async () => {
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
-                router.replace('/dashboard');
+                const { data: userData } = await supabase
+                    .from('users')
+                    .select('role')
+                    .eq('id', session.user.id)
+                    .single();
+
+                // Redirect sesuai role
+                if (userData?.role === 'admin') {
+                    router.replace('/dashboard/users');
+                } else {
+                    router.replace('/dashboard');
+                }
             } else {
                 setIsCheckingAuth(false);
             }
@@ -33,16 +44,26 @@ export default function LoginPage() {
         setLoading(true);
         setErrorMsg('');
 
-        const { data, error } = await supabase.auth.signInWithPassword({
+        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
             email,
             password,
         });
 
-        if (error) {
-            setErrorMsg(error.message);
+        if (authError) {
+            setErrorMsg(authError.message);
             setLoading(false);
-        } else {
-            router.push('/dashboard');
+        } else if (authData.user) {
+            const { data: userData } = await supabase
+                .from('users')
+                .select('role')
+                .eq('id', authData.user.id)
+                .single();
+
+            if (userData?.role === 'admin') {
+                router.push('/dashboard/users');
+            } else {
+                router.push('/dashboard');
+            }
         }
     };
 
