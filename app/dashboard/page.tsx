@@ -1,24 +1,22 @@
 "use client";
 
-import { Thermometer, Droplets, Wind, Activity, Leaf, Clock3 } from "lucide-react";
+import { Thermometer, Droplets, Activity, Leaf, Clock3, Layers } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export default function Dashboard() {
   // --- STATE MANAGEMENT ---
-  // Menyimpan data terbaru dari sensor
   const [latestData, setLatestData] = useState({
     temperature: 0,
     humidity: 0,
-    air_quality: 42, // Diabaikan/statis untuk saat ini
+    media_moisture: 0, // Mengganti air_quality menjadi media_moisture
     created_at: new Date().toISOString(),
   });
 
-  // Menyimpan status koneksi WebSocket
   const [isConnected, setIsConnected] = useState(false);
 
   // --- WEBSOCKET CONNECTION ---
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:4000/ws/sensor");
+    const ws = new WebSocket(process.env.NEXT_PUBLIC_MAGGOT_WEBSOCKET_URL as string);
 
     ws.onopen = () => {
       setIsConnected(true);
@@ -29,14 +27,15 @@ export default function Dashboard() {
         const incomingData = JSON.parse(event.data);
         const newTemp = parseFloat(incomingData.temp);
         const newHum = parseFloat(incomingData.hum);
+        const newMedia = parseFloat(incomingData.media_moisture); // Menangkap data media
 
-        // Jika data valid, perbarui state latestData
-        if (!isNaN(newTemp) && !isNaN(newHum)) {
+        // Memastikan ketiga data valid sebelum mengupdate state
+        if (!isNaN(newTemp) && !isNaN(newHum) && !isNaN(newMedia)) {
           setLatestData({
             temperature: newTemp,
             humidity: newHum,
-            air_quality: 42, // Tetap statis
-            created_at: new Date().toISOString(), // Update waktu saat data masuk
+            media_moisture: newMedia,
+            created_at: new Date().toISOString(),
           });
         }
       } catch (error) {
@@ -63,25 +62,25 @@ export default function Dashboard() {
   // --- DATA KARTU (Dinamis mengikuti state) ---
   const cards = [
     {
-      title: "Suhu",
-      value: `${latestData.temperature.toFixed(2)}°C`, // Dibuat 2 desimal agar presisi
+      title: "Suhu Udara",
+      value: `${latestData.temperature.toFixed(2)}°C`,
       desc: latestData.temperature > 33 ? "Suhu Terlalu Panas" : "Suhu Optimal",
       icon: Thermometer,
       color: latestData.temperature > 33 ? "from-red-500 to-red-700" : "from-emerald-500 to-emerald-700",
     },
     {
-      title: "Kelembapan",
+      title: "Kelembapan Udara",
       value: `${latestData.humidity.toFixed(2)}%`,
-      desc: "Kondisi Lembap",
+      desc: "Kondisi Kelembapan",
       icon: Droplets,
       color: "from-cyan-500 to-cyan-700",
     },
     {
-      title: "Kualitas Udara",
-      value: `${latestData.air_quality}`,
-      desc: "Udara Stabil",
-      icon: Wind,
-      color: "from-lime-500 to-lime-700",
+      title: "Kelembapan Media",
+      value: `${latestData.media_moisture}%`,
+      desc: "Kondisi Tanah Pakan",
+      icon: Layers, // Mengganti Wind menjadi Layers
+      color: "from-amber-500 to-amber-700", // Mengubah warna menjadi tema tanah/amber
     },
     {
       title: "Status Sistem",
@@ -149,25 +148,35 @@ export default function Dashboard() {
             <div className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${isConnected ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"}`}>{isConnected ? "Online" : "Offline"}</div>
           </div>
 
-          <div className="space-y-5">
+          <div className="space-y-6">
             <div>
               <div className="flex justify-between mb-2">
                 <span className="text-gray-600">Suhu Udara</span>
                 <span className="font-semibold text-emerald-700">{latestData.temperature.toFixed(2)}°C</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
-                {/* Visual Tweak: Lebar bar suhu dihitung rasio dari 50 derajat maksimal agar grafis bar terisi proporsional */}
                 <div className="bg-emerald-600 h-3 rounded-full transition-all duration-500 ease-in-out" style={{ width: `${Math.min((latestData.temperature / 50) * 100, 100)}%` }} />
               </div>
             </div>
 
             <div>
               <div className="flex justify-between mb-2">
-                <span className="text-gray-600">Kelembapan</span>
+                <span className="text-gray-600">Kelembapan Udara</span>
                 <span className="font-semibold text-cyan-700">{latestData.humidity.toFixed(2)}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div className="bg-cyan-600 h-3 rounded-full transition-all duration-500 ease-in-out" style={{ width: `${Math.min(latestData.humidity, 100)}%` }} />
+              </div>
+            </div>
+
+            {/* PROGRESS BAR BARU UNTUK KELEMBAPAN MEDIA */}
+            <div>
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-600">Kelembapan Media</span>
+                <span className="font-semibold text-amber-700">{latestData.media_moisture}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-3">
+                <div className="bg-amber-600 h-3 rounded-full transition-all duration-500 ease-in-out" style={{ width: `${Math.min(latestData.media_moisture, 100)}%` }} />
               </div>
             </div>
           </div>

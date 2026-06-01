@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { FileText, Download, Filter, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
-// Import koneksi Supabase dari lib kalian
 import { supabase } from "@/lib/supabase";
 
 type ReportData = {
@@ -10,6 +9,7 @@ type ReportData = {
   date: string;
   temperature: number;
   humidity: number;
+  media_moisture: number; // Tambahan tipe data baru
   status: "Optimal" | "Perlu Perhatian";
 };
 
@@ -22,7 +22,6 @@ export default function LaporanDashboard() {
     const fetchLaporan = async () => {
       setIsLoading(true);
 
-      // Menggunakan instance supabase dari lib
       const { data: rawData, error } = await supabase.from("sensor_logs").select("*").order("created_at", { ascending: false }).limit(50);
 
       if (error) {
@@ -47,6 +46,7 @@ export default function LaporanDashboard() {
             date: formattedDate,
             temperature: log.temperature,
             humidity: log.humidity,
+            media_moisture: log.media_moisture, // Memasukkan data kelembapan media
             status: log.temperature > 33 ? "Perlu Perhatian" : "Optimal",
           };
         });
@@ -90,14 +90,15 @@ export default function LaporanDashboard() {
                   <th className="px-6 py-4">ID Log</th>
                   <th className="px-6 py-4">Waktu</th>
                   <th className="px-6 py-4">Suhu</th>
-                  <th className="px-6 py-4">Kelembapan</th>
+                  <th className="px-6 py-4">K. Udara</th> {/* Disingkat agar tabel tidak terlalu lebar */}
+                  <th className="px-6 py-4">K. Media</th> {/* Kolom baru */}
                   <th className="px-6 py-4">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {isLoading ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
+                    <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
                       <div className="flex flex-col items-center justify-center gap-2">
                         <Loader2 className="animate-spin text-emerald-500" size={32} />
                         <p>Mengambil data dari cloud...</p>
@@ -106,7 +107,7 @@ export default function LaporanDashboard() {
                   </tr>
                 ) : data.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
+                    <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
                       Belum ada data sensor yang tersimpan.
                     </td>
                   </tr>
@@ -117,6 +118,8 @@ export default function LaporanDashboard() {
                       <td className="px-6 py-4 text-gray-600 whitespace-nowrap">{item.date}</td>
                       <td className="px-6 py-4 font-semibold text-emerald-700 whitespace-nowrap">{item.temperature}°C</td>
                       <td className="px-6 py-4 font-semibold text-cyan-700 whitespace-nowrap">{item.humidity}%</td>
+                      {/* Sel tabel untuk kelembapan media dengan warna berbeda agar mudah dibedakan */}
+                      <td className="px-6 py-4 font-semibold text-amber-700 whitespace-nowrap">{item.media_moisture}%</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${item.status === "Optimal" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
                           {item.status === "Optimal" ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
