@@ -141,7 +141,6 @@ export default function LoginPage() {
                         <div>
                             <div className="flex justify-between items-center mb-2">
                                 <label className="text-sm font-bold text-gray-700 block">Password</label>
-                                <Link href="#" className="text-sm font-bold text-emerald-600 hover:text-emerald-700 transition-colors">Lupa Password?</Link>
                             </div>
                             <div className="relative group">
                                 <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-600 transition-colors" />

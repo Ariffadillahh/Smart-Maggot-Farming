@@ -39,7 +39,7 @@ export default function EdukasiMaggot() {
         const newAnswers = [...userAnswers];
         newAnswers[currentQuestion] = optionLetter;
         setUserAnswers(newAnswers);
-        setError(null); // Hapus error saat jawaban dipilih
+        setError(null); 
     };
 
     const handleNext = () => {

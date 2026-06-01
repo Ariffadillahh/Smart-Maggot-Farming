@@ -6,19 +6,15 @@ import { Users, ShieldAlert, Mail } from 'lucide-react';
 import { useRoleGuard } from '@/hooks/useRoleGuard';
 
 export default function UserManagement() {
-    // 1. Deklarasi State
     const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // 2. Deklarasi Hook Custom
     const isGuardLoading = useRoleGuard('admin');
 
-    // 3. Deklarasi useEffect (HARUS DI ATAS IF)
     useEffect(() => {
         fetchUsers();
     }, []);
 
-    // 4. Deklarasi Fungsi-Fungsi
     const fetchUsers = async () => {
         setLoading(true);
         const { data, error } = await supabase
@@ -45,12 +41,10 @@ export default function UserManagement() {
         }
     };
 
-    // 5. PENGECEKAN LOADING (Posisinya di sini, sebelum render HTML utama)
     if (isGuardLoading || loading) {
         return <div className="p-10 text-center font-medium text-gray-500">Memuat data pengguna...</div>;
     }
 
-    // 6. Render HTML Utama
     return (
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 min-h-[70vh]">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
-import { supabase } from '@/lib/supabase'; // Pastikan path ini benar
+import { supabase } from '@/lib/supabase';
 
 export default function DashboardLayout({
     children,
@@ -50,7 +50,7 @@ export default function DashboardLayout({
         <div className="flex min-h-screen bg-gray-100">
             <Sidebar />
 
-            <main className="flex-1 p-8 mt-10 md:mt-0 overflow-x-hidden">
+            <main className="flex-1 p-3 md:p-8 mt-15 md:mt-0 overflow-x-hidden">
                 <header className="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm mb-6">
                     <h2 className="md:text-xl text-base font-bold text-emerald-800">
                         Smart Maggot Farming Dashboard
