@@ -12,7 +12,8 @@ import {
     X,
     LogOut,
     Users,
-    ListChecks
+    ListChecks,
+    Scale
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
@@ -58,6 +59,7 @@ export default function Sidebar() {
     const baseMenuItems = [
         { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
         { name: 'Monitoring', icon: Activity, path: '/dashboard/monitoring' },
+        { name: 'Pertumbuhan', icon: Scale, path: '/dashboard/pertumbuhan' },
         { name: 'Edukasi', icon: BookOpen, path: '/dashboard/edukasi' },
         { name: 'Laporan', icon: FileText, path: '/dashboard/laporan' },
     ];

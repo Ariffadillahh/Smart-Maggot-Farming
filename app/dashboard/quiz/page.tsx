@@ -72,7 +72,6 @@ export default function QuizManagement() {
         return <div className="p-10 text-center font-medium text-gray-500">Memuat halaman kuis...</div>;
     }
 
-    // 6. Render Utama
     return (
         <div className="space-y-8">
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -86,34 +85,34 @@ export default function QuizManagement() {
                 <form onSubmit={handleCreateQuiz} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
                         <label className="block text-sm font-bold text-gray-700 mb-1">Judul Topik</label>
-                        <input type="text" value={title} onChange={e => setTitle(e.target.value)} required className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Contoh: Dasar Budidaya Maggot" />
+                        <input type="text" value={title} onChange={e => setTitle(e.target.value)} required className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-black" placeholder="Contoh: Dasar Budidaya Maggot" />
                     </div>
                     <div className="md:col-span-2">
                         <label className="block text-sm font-bold text-gray-700 mb-1">Pertanyaan</label>
-                        <textarea value={question} onChange={e => setQuestion(e.target.value)} required className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none" rows={2} placeholder="Tuliskan pertanyaan di sini..." />
+                        <textarea value={question} onChange={e => setQuestion(e.target.value)} required className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-black" rows={2} placeholder="Tuliskan pertanyaan di sini..." />
                     </div>
 
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1">Pilihan A</label>
-                        <input type="text" value={optionA} onChange={e => setOptionA(e.target.value)} required className="w-full p-3 border border-gray-300 rounded-xl outline-none" />
+                        <input type="text" value={optionA} onChange={e => setOptionA(e.target.value)} required className="w-full p-3 border border-gray-300 rounded-xl outline-none text-black" />
                     </div>
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1">Pilihan B</label>
-                        <input type="text" value={optionB} onChange={e => setOptionB(e.target.value)} required className="w-full p-3 border border-gray-300 rounded-xl outline-none" />
+                        <input type="text" value={optionB} onChange={e => setOptionB(e.target.value)} required className="w-full p-3 border border-gray-300 rounded-xl outline-none text-black" />
                     </div>
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1">Pilihan C</label>
-                        <input type="text" value={optionC} onChange={e => setOptionC(e.target.value)} required className="w-full p-3 border border-gray-300 rounded-xl outline-none" />
+                        <input type="text" value={optionC} onChange={e => setOptionC(e.target.value)} required className="w-full p-3 border border-gray-300 rounded-xl outline-none text-black" />
                     </div>
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1">Pilihan D</label>
-                        <input type="text" value={optionD} onChange={e => setOptionD(e.target.value)} required className="w-full p-3 border border-gray-300 rounded-xl outline-none" />
+                        <input type="text" value={optionD} onChange={e => setOptionD(e.target.value)} required className="w-full p-3 border border-gray-300 rounded-xl outline-none text-black" />
                     </div>
 
                     <div className="md:col-span-2 flex items-center justify-between mt-4">
                         <div className="flex items-center gap-3">
                             <label className="text-sm font-bold text-gray-700">Jawaban Benar:</label>
-                            <select value={correctAnswer} onChange={e => setCorrectAnswer(e.target.value)} className="p-2 border border-gray-300 rounded-lg font-bold outline-none cursor-pointer">
+                            <select value={correctAnswer} onChange={e => setCorrectAnswer(e.target.value)} className="p-2 border border-gray-300 rounded-lg font-bold outline-none text-black cursor-pointer">
                                 <option value="A">A</option>
                                 <option value="B">B</option>
                                 <option value="C">C</option>

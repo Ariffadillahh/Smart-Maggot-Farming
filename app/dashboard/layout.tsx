@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
 import { supabase } from '@/lib/supabase';
+import { Toaster } from 'react-hot-toast';
 
 export default function DashboardLayout({
     children,
@@ -62,6 +63,8 @@ export default function DashboardLayout({
                 </header>
 
                 {children}
+
+                <Toaster position="top-right" reverseOrder={false} />
             </main>
         </div>
     );
